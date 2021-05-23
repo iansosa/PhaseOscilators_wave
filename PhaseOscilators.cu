@@ -14,18 +14,18 @@ class Ensemble_param
 {
 	int N;
 	std::string name;
-	boost::mt19937 *rng;
+	boost::mt19937 &rng;
 
 	public:
 		std::vector<prec> container;
 		prec mid;
 		prec sigma;
-		Ensemble_param(int in_N, std::string in_name, prec in_mid, prec in_sigma, boost::mt19937 &in_rng) : N(in_N), name(in_name), rng(&in_rng), mid(in_mid), sigma(in_sigma), container(N)
+		Ensemble_param(int in_N, std::string in_name, prec in_mid, prec in_sigma, boost::mt19937 &in_rng) : N(in_N), name(in_name), rng(in_rng), mid(in_mid), sigma(in_sigma), container(N)
 		{
 			set();
 		}
 
-		Ensemble_param(std::string in_name) : name(in_name), rng(NULL)
+		Ensemble_param(std::string in_name, boost::mt19937 &in_rng) : name(in_name), rng(in_rng)
 		{
 			load();
 		}
@@ -38,7 +38,7 @@ class Ensemble_param
 		void set()
 		{
 			boost::normal_distribution<> gauss(mid,sigma);
-    		boost::variate_generator< boost::mt19937&, boost::normal_distribution<> > gen(*rng,gauss);
+    		boost::variate_generator< boost::mt19937&, boost::normal_distribution<> > gen(rng,gauss);
 
     		for (int i = 0; i < N; ++i)
     		{
@@ -51,6 +51,9 @@ class Ensemble_param
 			std::ofstream txtOut;
 			txtOut.open(name+".txt");
 			txtOut.precision(8);
+			txtOut << N << " ";
+			txtOut << mid << " ";
+			txtOut << sigma << " ";
 			for (int i = 0; i < container.size(); ++i)
 			{
 				txtOut << container[i] << " ";
@@ -61,14 +64,22 @@ class Ensemble_param
 		void load()
 		{
 			std::ifstream txtIn_check;
+			int N_check;
 			txtIn_check.open("params.txt");
-			txtIn_check >> N;
+			txtIn_check >> N_check;
 			txtIn_check.close();
 
-			container.resize(N);
-
+			
 			std::ifstream txtIn;
 			txtIn.open(name+".txt");
+			txtIn >> N;
+			txtIn >> mid;
+			txtIn >> sigma;
+			container.resize(N);
+			if(N_check!=N)
+			{
+				std::cout << "INCONSISTENT PARAM SIZE FOR " << name << ". Expects N=" << N << " but check throws N=" << N_check <<std::endl;
+			}
 			for (int i = 0; i < container.size(); ++i)
 			{
 				txtIn >> container[i];
@@ -97,10 +108,12 @@ class Dinamic
     Ensemble_param G;
     Ensemble_param W;
 
+    boost::mt19937 &rng;
+
 	public:
 		int N;
 
-    	Dinamic() : I("I"), F("F"), G("G"), W("W")
+    	Dinamic(boost::mt19937 &in_rng) : rng(in_rng), I("I",in_rng), F("F",in_rng), G("G",in_rng), W("W",in_rng)
     	{
 			std::ifstream txtIn_check;
 			txtIn_check.open("params.txt");
@@ -109,7 +122,7 @@ class Dinamic
 			txtIn_check.close();
     	}
 
-    	Dinamic(int in_N , prec in_K, boost::mt19937 &in_rng, prec mid_I, prec sigma_I, prec mid_F, prec sigma_F, prec mid_G, prec sigma_G, prec mid_W, prec sigma_W) : N(in_N), K(in_K), I(in_N,"I",mid_I,sigma_I,in_rng), F(in_N,"F",mid_F,sigma_F,in_rng), A(in_N), G(in_N,"G",mid_G,sigma_G,in_rng), W(in_N,"W",mid_W,sigma_W,in_rng)
+    	Dinamic(int in_N , prec in_K, boost::mt19937 &in_rng, prec mid_I, prec sigma_I, prec mid_F, prec sigma_F, prec mid_G, prec sigma_G, prec mid_W, prec sigma_W) : N(in_N), K(in_K), rng(in_rng), I(in_N,"I",mid_I,sigma_I,in_rng), F(in_N,"F",mid_F,sigma_F,in_rng), A(in_N), G(in_N,"G",mid_G,sigma_G,in_rng), W(in_N,"W",mid_W,sigma_W,in_rng)
     	{ }
 
     	void operator() (const std::vector<prec> &x ,std::vector<prec> &dxdt ,const double t)
@@ -183,7 +196,8 @@ int main()
 	std::cout << "Hello World" << std::endl;
 
 
-	Dinamic P;
+	Dinamic P(rng);
+	P.print_params();
 	P.print_params_to_console();
 
 	return 0;
