@@ -25,7 +25,7 @@ class Ensemble_param
 			set();
 		}
 
-		Ensemble_param(int in_N, std::string in_name) : N(in_N), name(in_name), container(N), rng(NULL)
+		Ensemble_param(std::string in_name) : name(in_name), rng(NULL)
 		{
 			load();
 		}
@@ -51,7 +51,7 @@ class Ensemble_param
 			std::ofstream txtOut;
 			txtOut.open(name+".txt");
 			txtOut.precision(8);
-			for (int i = 0; i < N; ++i)
+			for (int i = 0; i < container.size(); ++i)
 			{
 				txtOut << container[i] << " ";
 			}
@@ -60,9 +60,16 @@ class Ensemble_param
 
 		void load()
 		{
+			std::ifstream txtIn_check;
+			txtIn_check.open("params.txt");
+			txtIn_check >> N;
+			txtIn_check.close();
+
+			container.resize(N);
+
 			std::ifstream txtIn;
 			txtIn.open(name+".txt");
-			for (int i = 0; i < N; ++i)
+			for (int i = 0; i < container.size(); ++i)
 			{
 				txtIn >> container[i];
 			}
@@ -71,7 +78,7 @@ class Ensemble_param
 
 		void print_to_console()
 		{
-			for (int i = 0; i < N; ++i)
+			for (int i = 0; i < container.size(); ++i)
 			{
 				std::cout << container[i] << " ";
 			}
@@ -93,8 +100,14 @@ class Dinamic
 	public:
 		int N;
 
-    	Dinamic(int in_N , prec in_K) : N(in_N), K(in_K), I(in_N,"I"), F(in_N,"F"), A(in_N), G(in_N,"G"), W(in_N,"W")
-    	{ }
+    	Dinamic() : I("I"), F("F"), G("G"), W("W")
+    	{
+			std::ifstream txtIn_check;
+			txtIn_check.open("params.txt");
+			txtIn_check >> N;
+			txtIn_check >> K;
+			txtIn_check.close();
+    	}
 
     	Dinamic(int in_N , prec in_K, boost::mt19937 &in_rng, prec mid_I, prec sigma_I, prec mid_F, prec sigma_F, prec mid_G, prec sigma_G, prec mid_W, prec sigma_W) : N(in_N), K(in_K), I(in_N,"I",mid_I,sigma_I,in_rng), F(in_N,"F",mid_F,sigma_F,in_rng), A(in_N), G(in_N,"G",mid_G,sigma_G,in_rng), W(in_N,"W",mid_W,sigma_W,in_rng)
     	{ }
@@ -142,6 +155,12 @@ class Dinamic
 
     	void print_params()
     	{
+			std::ofstream txtOut;
+			txtOut.open("params.txt");
+			txtOut.precision(8);
+			txtOut << N << " " << K << std::endl;
+			txtOut.close();
+
     		I.print();
     		F.print();
     		G.print();
@@ -164,7 +183,7 @@ int main()
 	std::cout << "Hello World" << std::endl;
 
 
-	Dinamic P(10, 1);
+	Dinamic P;
 	P.print_params_to_console();
 
 	return 0;
