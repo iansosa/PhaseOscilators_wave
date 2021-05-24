@@ -36,8 +36,10 @@ void Ensemble_param::set_rand(bool first)
 
 void Ensemble_param::print()
 {
+	mkdir("params", 0777);
+
 	std::ofstream txtOut;
-	txtOut.open(name+".txt");
+	txtOut.open("params/"+name+".txt");
 	txtOut.precision(8);
 	txtOut << N << " ";
 	txtOut << mid << " ";
@@ -57,7 +59,7 @@ void Ensemble_param::load()
 	txtIn_check >> N_check;
 	txtIn_check.close();	
 	std::ifstream txtIn;
-	txtIn.open(name+".txt");
+	txtIn.open("params/"+name+".txt");
 	txtIn >> N;
 	txtIn >> mid;
 	txtIn >> sigma;

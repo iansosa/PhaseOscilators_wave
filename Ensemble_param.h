@@ -6,6 +6,7 @@
 #ifndef ENSEMBLE_PARAM_H
 #define ENSEMBLE_PARAM_H
 
+#include <sys/stat.h>
 #include <boost/numeric/odeint.hpp>
 #include <boost/random.hpp>
 
@@ -19,6 +20,7 @@ class Ensemble_param
 	std::vector<prec> container;
 	prec mid;
 	prec sigma;
+	
 
 	public:
 
@@ -34,9 +36,9 @@ class Ensemble_param
 
 		void dist(prec in_mid, prec in_sigma=0); //sets medium value and sigma
 
-		int size();
+		int size(); //returns size of container
 
-		void resize(int i);
+		void resize(int i); //resizes container
 
 		prec& operator[](int i); //returns element i from container
 
