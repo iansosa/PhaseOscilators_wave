@@ -1,13 +1,36 @@
 #include "Ensemble_param.h"
 
 
-void Ensemble_param::set_rand()
+void Ensemble_param::dist(prec in_mid, prec in_sigma)
+{
+	mid=in_mid;
+	sigma=in_sigma;
+}
+
+int Ensemble_param::size()
+{
+	return N;
+}
+
+void Ensemble_param::resize(int in_N)
+{
+	N=in_N;
+	container.resize(in_N);
+	set_rand(false);
+}
+
+void Ensemble_param::set_rand(bool first)
 {
 	boost::normal_distribution<> gauss(mid,sigma);
     boost::variate_generator< boost::mt19937&, boost::normal_distribution<> > gen(rng,gauss);
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < container.size(); ++i)
     {
     	container[i]=gen();
+    }
+
+    if(first==false)
+    {
+    	container[0]=mid;
     }
 }
 

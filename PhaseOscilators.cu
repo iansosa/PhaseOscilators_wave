@@ -104,7 +104,7 @@ int main()
 	std::cout << "Hello World" << std::endl;
 
 
-	Dinamic P(rng);
+	Dinamic P(9 ,1 ,rng ,1 ,0.1 ,2 ,0.2 ,3 ,0.3 ,4 ,0.4);
 	P.print_params();
 	P.print_params_to_console();
 
