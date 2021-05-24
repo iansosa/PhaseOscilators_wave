@@ -16,10 +16,10 @@ void Ensemble_param::resize(int in_N)
 {
 	N=in_N;
 	container.resize(in_N);
-	set_rand(false);
+	generate(false);
 }
 
-void Ensemble_param::set_rand(bool first)
+void Ensemble_param::generate(bool first)
 {
 	boost::normal_distribution<> gauss(mid,sigma);
     boost::variate_generator< boost::mt19937&, boost::normal_distribution<> > gen(rng,gauss);
@@ -31,6 +31,15 @@ void Ensemble_param::set_rand(bool first)
     if(first==false)
     {
     	container[0]=mid;
+    }
+
+    if(type=="ofirst")
+    {
+    	container[0]=mid;
+    	for (int i = 1; i < container.size(); ++i)
+    	{
+    		container[i]=0;
+    	}
     }
 }
 
@@ -44,6 +53,7 @@ void Ensemble_param::print()
 	txtOut << N << " ";
 	txtOut << mid << " ";
 	txtOut << sigma << " ";
+	txtOut << type << " ";
 	for (int i = 0; i < container.size(); ++i)
 	{
 		txtOut << container[i] << " ";
@@ -63,6 +73,7 @@ void Ensemble_param::load()
 	txtIn >> N;
 	txtIn >> mid;
 	txtIn >> sigma;
+	txtIn >> type;
 	container.resize(N);
 	if(N_check!=N)
 	{
@@ -75,8 +86,22 @@ void Ensemble_param::load()
 	txtIn.close();
 }
 
+void Ensemble_param::type_rand(bool is_rand)
+{
+	if(is_rand==true)
+	{
+		type="gauss";
+	}
+	else
+	{
+		type="ofirst";
+	}
+}
+
 void Ensemble_param::print_to_console()
 {
+	std::cout << name <<": N="<< N << " mid="<< mid << " sigma=" << sigma << " " << type<<std::endl;
+	std::cout << "   ";
 	for (int i = 0; i < container.size(); ++i)
 	{
 		std::cout << container[i] << " ";

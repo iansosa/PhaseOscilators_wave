@@ -20,13 +20,21 @@ class Ensemble_param
 	std::vector<prec> container;
 	prec mid;
 	prec sigma;
-	
+	std::string type="gauss";
 
 	public:
 
-		Ensemble_param(int in_N, std::string in_name, prec in_mid, prec in_sigma, boost::mt19937 &in_rng) : N(in_N), name(in_name), rng(in_rng), mid(in_mid), sigma(in_sigma), container(N) //sets name and all parameters
+		Ensemble_param(int in_N, std::string in_name, prec in_mid, boost::mt19937 &in_rng, bool all=true) : N(in_N), name(in_name), rng(in_rng), mid(in_mid), container(N) //sets name and all parameters, nothing random, if all false only first parameter is different from zero
 		{
-			set_rand(false);
+			sigma=0;
+			type_rand(all);
+			generate(false); //generates container with first element equal mid
+		}
+
+		Ensemble_param(int in_N, std::string in_name, prec in_mid, prec in_sigma, boost::mt19937 &in_rng, bool all=true) : N(in_N), name(in_name), rng(in_rng), mid(in_mid), sigma(in_sigma), container(N) //sets name and all parameters, if all false only first parameter is different from zero
+		{
+			type_rand(all);
+			generate(false); //generates container with first element equal mid
 		}
 
 		Ensemble_param(std::string in_name, boost::mt19937 &in_rng) : name(in_name), rng(in_rng) //sets name and loads parameters from file
@@ -42,11 +50,13 @@ class Ensemble_param
 
 		prec& operator[](int i); //returns element i from container
 
-		void set_rand(bool first=true); //sets elements in container with a gaussian distribution(mid,sigma). If argument true then first element is also random
+		void generate(bool first=false); //sets elements in container with a gaussian distribution(mid,sigma). If argument true then first element is also random
 
 		void print(); //prints container in file
 
 		void load(); //loads container from file
+
+		void type_rand(bool=true); //if true set type to gauss, if false type is set to ofirst
 
 		void print_to_console(); //prints container elements in console
 
