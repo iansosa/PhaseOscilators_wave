@@ -1,3 +1,16 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
+#include <cstring>
+
+#include <sys/stat.h>
+#include <boost/numeric/odeint.hpp>
+#include <boost/random.hpp>
+
+typedef double prec;
+
 #include "Ensemble_param.h"
 
 

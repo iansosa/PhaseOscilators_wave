@@ -6,12 +6,6 @@
 #ifndef ENSEMBLE_PARAM_H
 #define ENSEMBLE_PARAM_H
 
-#include <sys/stat.h>
-#include <boost/numeric/odeint.hpp>
-#include <boost/random.hpp>
-
-typedef double prec;
-
 class Ensemble_param
 {
 	int N;

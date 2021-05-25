@@ -4,7 +4,15 @@
 #include <fstream>
 #include <stdlib.h>
 #include <cstring>
+
+#include <sys/stat.h>
+#include <boost/numeric/odeint.hpp>
+#include <boost/random.hpp>
+
+typedef double prec;
+
 #include "Ensemble_param.h"
+#include "Ensemble_connections.h"
 
 class Dinamic 
 {
@@ -108,6 +116,10 @@ int main()
 	//P.print_params();
 	Dinamic P(rng);
 	P.print_params_to_console();
+
+	Ensemble_connections A(10, "A", rng);
+	A.print_to_console();
+	A.print();
 
 	return 0;
 }
