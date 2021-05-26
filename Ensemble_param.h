@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 #ifndef ENSEMBLE_PARAM_H
 #define ENSEMBLE_PARAM_H
@@ -35,6 +36,10 @@ class Ensemble_param
 		{
 			load();
 		}
+
+		void assign(int i, prec value); //assignes value to element i in container
+
+		void equal(std::vector<prec> &x);
 
 		void dist(prec in_mid, prec in_sigma=0); //sets medium value and sigma
 

@@ -13,6 +13,15 @@ typedef double prec;
 
 #include "Ensemble_param.h"
 
+void Ensemble_param::equal(std::vector<prec> &x)
+{
+	container=x;
+}
+
+void Ensemble_param::assign(int i, prec value)
+{
+	container[i]=value;
+}
 
 void Ensemble_param::dist(prec in_mid, prec in_sigma)
 {
@@ -62,7 +71,7 @@ void Ensemble_param::print()
 
 	std::ofstream txtOut;
 	txtOut.open("params/"+name+".txt");
-	txtOut.precision(8);
+	txtOut.precision(std::numeric_limits< prec >::max_digits10);
 	txtOut << N << " ";
 	txtOut << mid << " ";
 	txtOut << sigma << " ";
