@@ -30,13 +30,17 @@ class Ensemble_connections
 
 		int size(); //returns size of container
 
-		void resize(int i); //resizes container
+		void resize(int i); //resizes container and generates it again
 
 		void generate(std::string s); //sets elements in container following the instructions in string
+
+		void connect(int i, int j); //connects two elements
 
 		void print(); //prints container in file
 
 		void load(); //loads container from file
+
+		std::string get_type();
 
 		void print_to_console(); //prints container elements in console
 

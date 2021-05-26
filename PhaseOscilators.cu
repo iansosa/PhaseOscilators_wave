@@ -109,17 +109,20 @@ int main()
 {
  	boost::mt19937 rng(static_cast<unsigned int>(std::time(0)));
 
-	std::cout << "Hello World" << std::endl;
-
 
 	//Dinamic P(9 ,1 ,rng ,1 ,0.1 ,2 ,0.2 ,3 ,0.3 ,4 ,0.3);
 	//P.print_params();
 	Dinamic P(rng);
 	P.print_params_to_console();
 
-	Ensemble_connections A(10, "A", rng);
+	Ensemble_connections A(10, "A", rng, "chain");
 	A.print_to_console();
-	A.print();
+	std::cout << A.size() << std::endl;
+	A.resize(11);
+	std::cout << A.size() << std::endl;
+	A.print_to_console();
+
+	std::cout << A.get_type() << std::endl;
 
 	return 0;
 }

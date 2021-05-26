@@ -16,7 +16,7 @@ typedef double prec;
 
 int Ensemble_connections::_2dto1d(int a, int b)
 {
-	return a+b*a;
+	return a+b*N;
 }
 
 void Ensemble_connections::_1dto2d(int idx,int &a, int &b)
@@ -39,7 +39,29 @@ void Ensemble_connections::resize(int i)
 
 void Ensemble_connections::generate(std::string s)
 {
-	std::fill(container.begin(), container.end(), 1);
+	if(s=="global")
+	{
+		std::fill(container.begin(), container.end(), 1);
+	}
+	if(s=="empty")
+	{
+		std::fill(container.begin(), container.end(), 0);
+	}
+	if(s=="chain")
+	{
+		std::fill(container.begin(), container.end(), 0);
+		for (int i = 0; i < N-1; ++i)
+		{
+			connect(i,i+1);
+		}
+	}
+	
+}
+
+void Ensemble_connections::connect(int i, int j)
+{
+	container[_2dto1d(i, j)]=1;
+	container[_2dto1d(j, i)]=1;
 }
 
 void Ensemble_connections::print()
@@ -83,6 +105,11 @@ void Ensemble_connections::load()
 		txtIn >> container[i];
 	}
 	txtIn.close();
+}
+
+std::string Ensemble_connections::get_type()
+{
+	return type;
 }
 
 void Ensemble_connections::print_to_console()
