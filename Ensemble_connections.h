@@ -28,6 +28,11 @@ class Ensemble_connections
 			load();
 		}
 
+		prec operator() (int a, int b)
+		{
+			return container[_2dto1d(a,b)];
+		}
+
 		int size(); //returns size of container
 
 		void resize(int i); //resizes container and generates it again
