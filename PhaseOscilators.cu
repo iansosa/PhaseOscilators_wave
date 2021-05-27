@@ -43,7 +43,7 @@ int main()
 	P.print_params();
 
 	e.clean();
-	e.run(P,0,2000,100);
+	e.run(P,0,1500,100);
 	e.print();
 
 
