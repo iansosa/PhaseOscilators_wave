@@ -7,6 +7,7 @@
 
 #include <sys/stat.h>
 #include <boost/numeric/odeint.hpp>
+#include <boost/numeric/odeint/external/openmp/openmp.hpp>
 #include <boost/random.hpp>
 
 typedef double prec;
@@ -16,47 +17,50 @@ typedef double prec;
 #include "Ensemble_Dinamic.h"
 
 
-prec Dinamic::interaction_sum_all(int id, const std::vector<prec> &x)
+prec Dinamic::to_odeint::interaction_sum_all(int id, const std::vector<prec> &x)
 {
 	prec sum=0;
-	for (int i = 0; i < N; ++i)
+	for (int i = 0; i < N_t_odeint; ++i)
 	{
-		sum=sum+A(id,i)*sin(x[2*i]-x[2*id])/N;
+		sum=sum+A_t_odeint(id,i)*sin(x[2*i]-x[2*id])/N_t_odeint;
 	}
-	return sum*K;
+	return sum*K_t_odeint;
 }
 
-prec Dinamic::interaction_sum_chain(int id,const std::vector<prec> &x)
+prec Dinamic::to_odeint::interaction_sum_chain(int id,const std::vector<prec> &x)
 {
-	prec sum=0;
-    if(id==0)
-    {
-    	sum=sum+A(id,id+1)*sin(x[2*(id+1)]-x[2*id])/N;
-    }
-    if(id==N-1)
-    {
-    	sum=sum+A(id,id-1)*sin(x[2*(id-1)]-x[2*id])/N;
-    }
-    if(id>0 && id<N-1)
-    {
-    	sum=sum+A(id,id+1)*sin(x[2*(id+1)]-x[2*id])/N;
-    	sum=sum+A(id,id-1)*sin(x[2*(id-1)]-x[2*id])/N;
-    }
-   
-	return sum*K;
+			prec sum=0;
+		    if(id>0 && id<N_t_odeint-1)
+		    {
+		    	sum=sum+A_t_odeint(id,id+1)*sin(x[2*(id+1)]-x[2*id])/N_t_odeint;
+		    	sum=sum+A_t_odeint(id,id-1)*sin(x[2*(id-1)]-x[2*id])/N_t_odeint;
+		    	return sum*K_t_odeint;
+ 		    }
+ 		    if(id==0)
+ 		    {
+		    	sum=sum+A_t_odeint(id,id+1)*sin(x[2*(id+1)]-x[2*id])/N_t_odeint;
+		    	return sum*K_t_odeint;
+		    }
+		    if(id==N_t_odeint-1)
+		    {
+		    	sum=sum+A_t_odeint(id,id-1)*sin(x[2*(id-1)]-x[2*id])/N_t_odeint;
+		    	return sum*K_t_odeint;
+		    }  
+			return sum*K_t_odeint;
 }
 
-prec Dinamic::interaction_sum(int id, const std::vector<prec> &x)
+prec Dinamic::to_odeint::interaction_sum(int id, const std::vector<prec> &x)
 {
-	if(A.get_type()=="chain")
+	if(A_t_odeint.get_type()=="chain")
 	{
 		return interaction_sum_chain(id,x);
 	}
-	if(A.get_type()=="global" || A.get_type()=="custom")
+	if(A_t_odeint.get_type()=="global" || A_t_odeint.get_type()=="custom")
 	{
 		return interaction_sum_all(id,x);
 	}
 }
+
 
 void Dinamic::print_params()
 {
