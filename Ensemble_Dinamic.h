@@ -40,14 +40,11 @@ class Dinamic
    	 		{}
 
 			prec interaction_sum_chain(int id,const std::vector<prec> &x);
-
 			prec interaction_sum(int id, const std::vector<prec> &x);
-
 			prec interaction_sum_all(int id, const std::vector<prec> &x);
 
     		void operator() (const std::vector<prec> &x ,std::vector<prec> &dxdt ,const prec t)
     		{
-    		
     			#pragma omp parallel for schedule(runtime)
     	    	for (int i = 0; i < N_t_odeint; ++i)
     		    {
