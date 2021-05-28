@@ -13,9 +13,9 @@ class Evolve
 	Ensemble_param  v_i;
 	std::vector<std::vector<prec>> q;
 	std::vector<prec> t;
+	prec conv_crit=99.5;
 
 	std::vector<prec> translated_init;
-	
 
 	void translate_init();
 
@@ -54,6 +54,17 @@ public:
 
 	void run(Dinamic &P, prec t_start, prec t_end, prec t_save=-1);
 
+	int find_next_maxima(int t_start,int k=1);
+	int find_next_minima(int t_start,int k=1);
+
+	bool did_converge(int i);
+
+	prec convergence(int i);
+
+	prec period(int i=1);
+	prec frec(int i=1);
+	prec drift(int i=1);
+
 	void print_init();
 
 	void load_init();
@@ -71,6 +82,8 @@ public:
 	void print();
 
 	void clean();
+
+	int size();
 };
 
 #endif
