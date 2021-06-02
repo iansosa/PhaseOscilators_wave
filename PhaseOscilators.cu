@@ -145,6 +145,7 @@ int main()
 	Evolve e(N, rng);
 	for (int i = 0; i < prom; ++i)
 	{
+		std::cout << "Iter: (" << i+1 << "/" << prom << ")" << std::endl;
 		U[i].resize(N);
 		e.run(P,0,50000,100);
 		calc_U(e,P,dx,U[i]);
