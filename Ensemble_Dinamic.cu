@@ -49,6 +49,33 @@ prec Dinamic::to_odeint::interaction_sum_chain(int id,const std::vector<prec> &x
 			return sum*K_t_odeint;
 }
 
+std::string Dinamic::get_type()
+{
+	return A.get_type();
+}
+
+prec Dinamic::to_odeint::h_interaction_sum_chain(int id,const std::vector<prec> &x)
+{
+			prec sum=0;
+		    if(id>0 && id<N_t_odeint-1)
+		    {
+		    	sum=sum+A_t_odeint(id,id+1)*(x[2*(id+1)]-x[2*id])/N_t_odeint;
+		    	sum=sum+A_t_odeint(id,id-1)*(x[2*(id-1)]-x[2*id])/N_t_odeint;
+		    	return sum*K_t_odeint;
+ 		    }
+ 		    if(id==0)
+ 		    {
+		    	sum=sum+A_t_odeint(id,id+1)*(x[2*(id+1)]-x[2*id])/N_t_odeint;
+		    	return sum*K_t_odeint;
+		    }
+		    if(id==N_t_odeint-1)
+		    {
+		    	sum=sum+A_t_odeint(id,id-1)*(x[2*(id-1)]-x[2*id])/N_t_odeint;
+		    	return sum*K_t_odeint;
+		    }  
+			return sum*K_t_odeint;
+}
+
 prec Dinamic::to_odeint::interaction_sum(int id, const std::vector<prec> &x)
 {
 	if(A_t_odeint.get_type()=="chain")
@@ -59,6 +86,35 @@ prec Dinamic::to_odeint::interaction_sum(int id, const std::vector<prec> &x)
 	{
 		return interaction_sum_all(id,x);
 	}
+	if(A_t_odeint.get_type()=="h_chain")
+	{
+		return h_interaction_sum_chain(id,x);
+	}
+	return 0;
+}
+
+prec Dinamic::to_odeint::h_force_sum(prec sum, int i,const std::vector<prec> &x,const prec t)
+{
+			return sum/I_t_odeint[i]+F_t_odeint[i]*(sin(W_t_odeint[i]*t)-x[2*i])/I_t_odeint[i]-(G_t_odeint[i]/I_t_odeint[i])*x[2*i+1];
+}
+
+prec Dinamic::to_odeint::p_force_sum(prec sum, int i,const std::vector<prec> &x,const prec t)
+{
+			return sum/I_t_odeint[i]+F_t_odeint[i]*sin(W_t_odeint[i]*t-x[2*i])/I_t_odeint[i]-(G_t_odeint[i]/I_t_odeint[i])*x[2*i+1];
+}
+
+
+prec Dinamic::to_odeint::force_sum(prec sum, int id, const std::vector<prec> &x,const prec t)
+{
+	if(A_t_odeint.get_type()=="chain" || A_t_odeint.get_type()=="global" || A_t_odeint.get_type()=="custom")
+	{
+		return p_force_sum(sum,id,x,t);
+	}
+	if(A_t_odeint.get_type()=="h_chain")
+	{
+		return h_force_sum(sum,id,x,t);
+	}
+	return 0;
 }
 
 

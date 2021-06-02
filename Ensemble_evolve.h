@@ -27,15 +27,16 @@ class Evolve
 	    prec t_start;
 	    prec t_end;
 	    prec t_save;
+	    prec dt;
 	    int iter=0;
 	
-	    push_back_state_and_time( std::vector< std::vector<prec> > &states , std::vector< prec > &times, prec in_t_start, prec in_t_end , prec in_t_save) : m_states( states ) , m_times( times ), t_start(in_t_start), t_end(in_t_end), t_save(in_t_save) { }
+	    push_back_state_and_time( std::vector< std::vector<prec> > &states , std::vector< prec > &times, prec in_t_start, prec in_t_end , prec in_t_save, prec dt_in) : m_states( states ) , m_times( times ), t_start(in_t_start), t_end(in_t_end), t_save(in_t_save), dt(dt_in) { }
 	
 	    void operator()( const std::vector<prec> &x , prec t_boost )
 	    {
-	    	if(iter%1000==0)
+	    	if(iter%10000==0)
 	    	{
-	    		std::cout << "time: " << iter*0.01+t_start << "/" << t_end <<'\r' << std::flush ;
+	    		std::cout << "time: " << iter*dt+t_start << "/" << t_end <<'\r' << std::flush ;
 	    	}
 	    	iter++;
 	    	if(t_boost>=t_end-t_save)
@@ -84,6 +85,10 @@ public:
 	void clean();
 
 	int size();
+
+	prec Amp(int i,Dinamic &P);
+
+	prec Diff(int i);
 };
 
 #endif

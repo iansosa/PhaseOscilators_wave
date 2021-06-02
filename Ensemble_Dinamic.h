@@ -40,7 +40,11 @@ class Dinamic
    	 		{}
 
 			prec interaction_sum_chain(int id,const std::vector<prec> &x);
+			prec h_interaction_sum_chain(int id,const std::vector<prec> &x);
 			prec interaction_sum(int id, const std::vector<prec> &x);
+			prec force_sum(prec sum,int id, const std::vector<prec> &x,const prec t);
+			prec h_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t);
+			prec p_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t);
 			prec interaction_sum_all(int id, const std::vector<prec> &x);
 
     		void operator() (const std::vector<prec> &x ,std::vector<prec> &dxdt ,const prec t)
@@ -51,7 +55,8 @@ class Dinamic
     	 	   		prec sum;
     		    	sum=interaction_sum(i,x);
         			dxdt[2*i]=x[2*i+1];
-					dxdt[2*i+1]=sum/I_t_odeint[i]+F_t_odeint[i]*sin(W_t_odeint[i]*t-x[2*i])/I_t_odeint[i]-(G_t_odeint[i]/I_t_odeint[i])*x[2*i+1];      	
+        			dxdt[2*i+1]=force_sum(sum,i,x,t);
+					//dxdt[2*i+1]=sum/I_t_odeint[i]+F_t_odeint[i]*sin(W_t_odeint[i]*t-x[2*i])/I_t_odeint[i]-(G_t_odeint[i]/I_t_odeint[i])*x[2*i+1];
         		}
     		}
 
@@ -81,6 +86,8 @@ class Dinamic
     	void print_params_to_console();
 
     	void generate();
+
+    	std::string get_type();
 
 };
 

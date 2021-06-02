@@ -55,6 +55,14 @@ void Ensemble_connections::generate(std::string s)
 			connect(i,i+1);
 		}
 	}
+	if(s=="h_chain")
+	{
+		std::fill(container.begin(), container.end(), 0);
+		for (int i = 0; i < N-1; ++i)
+		{
+			connect(i,i+1);
+		}
+	}
 	
 }
 

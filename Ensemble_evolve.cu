@@ -12,7 +12,6 @@
 
 typedef double prec;
 
-
 #include "Ensemble_param.h"
 #include "Ensemble_connections.h"
 #include "Ensemble_Dinamic.h"
@@ -42,10 +41,11 @@ void Evolve::run(Dinamic &P, prec t_start, prec t_end, prec t_save)
 	std::cout << "N=" << N << std::endl;
 	std::cout << "Running..." << std::endl;
 
-
+	prec dt=0.01;
 	boost::numeric::odeint::runge_kutta4 <std::vector< prec > , prec , std::vector< prec > , prec , boost::numeric::odeint::openmp_range_algebra> stepper;
-	push_back_state_and_time push(q , t, t_start, t_end, t_save);
-	size_t steps=integrate_adaptive(stepper, P(), translated_init , t_start , t_end, 0.01 , push);
+	push_back_state_and_time push(q , t, t_start, t_end, t_save,dt);
+	
+	size_t steps=integrate_adaptive(stepper, P(), translated_init , t_start , t_end, dt , push);
 	std::cout << std::endl;
 }
 
@@ -106,9 +106,14 @@ prec Evolve::convergence(int k)
 	{
 		int second_maxima=find_next_maxima(first_maxima+1,k);
 		int first_minima=find_next_minima(first_maxima+1,k);
-		if(second_maxima<t.size()-1 && first_minima<t.size()-1)
+		if(second_maxima<t.size()-1 && first_minima<t.size()-1 && second_maxima-first_minima>50)
 		{
-			return 100-100*fabs((v(k,second_maxima)-v(k,first_maxima))/(v(k,first_maxima)-v(k,first_minima)));
+			prec first_v=v(k,first_maxima);
+			prec second_v=v(k,first_minima);
+			if(first_v>second_v)
+			{
+				return 100-100*fabs((v(k,second_maxima)-v(k,first_maxima))/(first_v-second_v));
+			}
 		}
 	}
 	return 0;
@@ -137,12 +142,16 @@ prec Evolve::frec(int k)
 
 prec Evolve::drift(int k)
 {
+	//std::cout << k << " entered w" << std::endl;
 	if(convergence(k)>conv_crit)
 	{
-		int first_maxima=find_next_maxima(0,k);
+		//std::cout << "drift: " << k << " passed conv test" << std::endl;
+		int first_maxima=find_next_maxima(1,k);
+		//std::cout <<"drift: K:" << k << " first_maxima: " << first_maxima;
 		if(first_maxima<t.size()-1)
 		{
 			int last_maxima=find_next_maxima(first_maxima+1,k);
+			
 			int moving=last_maxima;
 			
 			while(moving<t.size()-1)
@@ -150,12 +159,81 @@ prec Evolve::drift(int k)
 				last_maxima=moving;
 				moving=find_next_maxima(moving+1,k);
 			}
+			//std::cout << "last_maxima: " << last_maxima << std::endl;
 			if(first_maxima==last_maxima)
 			{
 				return 0;
 			}
 			return (x(k,last_maxima)-x(k,first_maxima))/(t[last_maxima]-t[first_maxima]);
 		}
+	}
+	return 0;
+}
+
+prec Evolve::Amp(int k,Dinamic &P)
+{
+	if(did_converge(k)==true)
+	{
+		//std::cout << k << " did converge" << std::endl;
+		int tstart=find_next_maxima(0,k);
+		//std::cout << "amp: first maxima " << tstart << " v " << v(k,tstart);
+		int tend=find_next_maxima(tstart+1,k);
+		//std::cout << " second maxima " << tend << " v" << v(k,tend) << std::endl;
+		if(tstart==tend)
+		{
+			return 0;
+		}
+		prec maxima=-10000;
+		prec minima=100000;
+		prec current;
+		prec w;
+		if(P.get_type()=="h_chain")
+		{
+			w=0;
+		}
+		else
+		{
+			w=drift(k);
+		}
+		for (int i = tstart; i < tend; ++i)
+		{
+			
+			current=x(k,i)-w*t[i];
+			if(maxima<current)
+			{
+				maxima=current;
+			}
+			if(minima>current)
+			{
+				minima=current;
+			}
+		}
+		return (maxima-minima)/2.0;
+	}
+	return 0;
+}
+
+prec Evolve::Diff(int k)
+{
+	if(did_converge(k)==true && k<N-1 && k>0)
+	{
+		int tstart=find_next_maxima(0,k);
+		int tend=find_next_maxima(tstart+1,k);
+		if(tstart==tend)
+		{
+			return 0;
+		}
+		prec maxima=-10000;
+		prec current;
+		for (int i = tstart; i < tend; ++i)
+		{
+			current=fabs(x(k,i)-x(k+1,i));
+			if(maxima<current)
+			{
+				maxima=current;
+			}
+		}
+		return maxima;
 	}
 	return 0;
 }
