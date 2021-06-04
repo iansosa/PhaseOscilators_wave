@@ -19,6 +19,7 @@ typedef double prec;
 
 void Evolve::translate_init()
 {
+	std::cout << "entered translate_init" << std::endl;
 	for (int i = 0; i < N; ++i)
 	{
 		translated_init[2*i]=x_i[i];
@@ -27,6 +28,23 @@ void Evolve::translate_init()
 		{
 			int entero=translated_init[2*i]/(2.0*M_PI);
 			translated_init[2*i]=translated_init[2*i]-2*M_PI*entero;
+		}
+	}
+}
+
+void Evolve::calc_convergence()
+{
+	//std::cout << "entered calc_convergence" << std::endl;
+	conv[0]=false;
+	for (int i = 1; i < N; ++i)
+	{
+		if(convergence(i)>conv_crit)
+		{
+			conv[i]=true;
+		}
+		else
+		{
+			conv[i]=false;
 		}
 	}
 }
@@ -51,13 +69,14 @@ void Evolve::run(Dinamic &P, prec t_start, prec t_end, prec t_save)
 
 int Evolve::find_next_maxima(int t_start,int k)
 {
-	while(v(k,t_start+1)<=v(k,t_start) && t_start < t.size()-2)
+	//std::cout << k <<" entered find_next_maxima t_start " << t_start << std::endl;
+	while(v(k,t_start+1)<=v(k,t_start) && t_start < t.size()-3)
 	{
-		t_start++;
+		t_start=t_start+1;
 	}
 	if(v(k,t_start+1)>v(k,t_start))
 	{
-		for (int i = t_start; i < t.size()-1; ++i)
+		for (int i = t_start; i < t.size()-3; ++i)
 		{
 			if(v(k,i+1)<=v(k,i))
 			{
@@ -65,18 +84,18 @@ int Evolve::find_next_maxima(int t_start,int k)
 			}
 		}
 	}
-	return t.size()-1;
+	return t.size()-3;
 }
 
 int Evolve::find_next_minima(int t_start,int k)
 {
-	while(v(k,t_start+1)>=v(k,t_start) && t_start < t.size()-2)
+	while(v(k,t_start+1)>=v(k,t_start) && t_start < t.size()-3)
 	{
-		t_start++;
+		t_start=t_start+1;
 	}
 	if(v(k,t_start+1)<v(k,t_start))
 	{
-		for (int i = t_start; i < t.size()-1; ++i)
+		for (int i = t_start; i < t.size()-3; ++i)
 		{
 			if(v(k,i+1)>=v(k,i))
 			{
@@ -84,19 +103,7 @@ int Evolve::find_next_minima(int t_start,int k)
 			}
 		}
 	}
-	return t.size()-1;
-}
-
-bool Evolve::did_converge(int i)
-{
-	if(convergence(i)>conv_crit)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return t.size()-3;
 }
 
 prec Evolve::convergence(int k)
@@ -121,7 +128,7 @@ prec Evolve::convergence(int k)
 
 prec Evolve::period(int k)
 {
-	if(convergence(k)>conv_crit)
+	if(conv[k]==true)
 	{
 		int first_maxima=find_next_maxima(0,k);
 		int second_maxima=find_next_maxima(first_maxima+1,k);
@@ -143,21 +150,22 @@ prec Evolve::frec(int k)
 prec Evolve::drift(int k)
 {
 	//std::cout << k << " entered w" << std::endl;
-	if(convergence(k)>conv_crit)
+	if(conv[k]==true)
 	{
 		//std::cout << "drift: " << k << " passed conv test" << std::endl;
 		int first_maxima=find_next_maxima(1,k);
-		//std::cout <<"drift: K:" << k << " first_maxima: " << first_maxima;
+		//std::cout <<"drift: K:" << k << " first_maxima: " << first_maxima << std::endl;
 		if(first_maxima<t.size()-1)
 		{
-			int last_maxima=find_next_maxima(first_maxima+1,k);
+			int last_maxima=find_next_maxima(first_maxima,k);
 			
 			int moving=last_maxima;
 			
-			while(moving<t.size()-1)
+			while(moving<t.size()-10)
 			{
+				std::cout << t.size() << std::endl;
 				last_maxima=moving;
-				moving=find_next_maxima(moving+1,k);
+				moving=find_next_maxima(moving,k);
 			}
 			//std::cout << "last_maxima: " << last_maxima << std::endl;
 			if(first_maxima==last_maxima)
@@ -172,7 +180,7 @@ prec Evolve::drift(int k)
 
 prec Evolve::Amp(int k,Dinamic &P)
 {
-	if(did_converge(k)==true)
+	if(conv[k]==true)
 	{
 		//std::cout << k << " did converge" << std::endl;
 		int tstart=find_next_maxima(0,k);
@@ -215,7 +223,7 @@ prec Evolve::Amp(int k,Dinamic &P)
 
 prec Evolve::Diff(int k)
 {
-	if(did_converge(k)==true && k<N-1 && k>0)
+	if(conv[k]==true && k<N-1 && k>0)
 	{
 		int tstart=find_next_maxima(0,k);
 		int tend=find_next_maxima(tstart+1,k);

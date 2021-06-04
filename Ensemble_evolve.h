@@ -13,7 +13,8 @@ class Evolve
 	Ensemble_param  v_i;
 	std::vector<std::vector<prec>> q;
 	std::vector<prec> t;
-	prec conv_crit=99.5;
+	
+	prec conv_crit=99.7;
 
 	std::vector<prec> translated_init;
 
@@ -48,7 +49,9 @@ class Evolve
 	};
 
 public:
-	Evolve(int in_N, boost::mt19937 &in_rng) : N(in_N), x_i(N,"X_i",0,0,in_rng), v_i(N,"V_i",0,0,in_rng), translated_init(2*N)
+	std::vector<bool> conv;
+
+	Evolve(int in_N, boost::mt19937 &in_rng) : N(in_N), x_i(in_N,"X_i",0,0,in_rng), v_i(in_N,"V_i",0,0,in_rng), translated_init(2*in_N), conv(in_N)
 	{
 		translate_init();
 	}
@@ -58,7 +61,7 @@ public:
 	int find_next_maxima(int t_start,int k=1);
 	int find_next_minima(int t_start,int k=1);
 
-	bool did_converge(int i);
+	void calc_convergence();
 
 	prec convergence(int i);
 

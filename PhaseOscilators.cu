@@ -18,32 +18,6 @@ typedef double prec;
 #include "Ensemble_Dinamic.h"
 #include "Ensemble_evolve.h"
 
-void check_stationary(Evolve &e, Dinamic &P)
-{
-	bool statement=false;
-	int count=0;
-	while(statement==false)
-	{
-		e.clean();
-		e.run(P,count*10000,(count+1)*10000,100);
-
-		for (int i = 1; i < e.size(); ++i)
-		{	
-			prec convergence=e.convergence(i);
-			if(convergence>0)
-			{
-				std::cout << i <<": " << convergence << std::endl;
-			}
-		}
-
-		statement=e.did_converge(49);
-		count++;
-
-		e.reset_init();		
-	}
-	e.print();
-	e.print_init();
-}
 
 void calc_U(Evolve &e, Dinamic &P, prec dx, std::vector<prec> &U)
 {
@@ -148,6 +122,7 @@ int main()
 		std::cout << "Iter: (" << i+1 << "/" << prom << ")" << std::endl;
 		U[i].resize(N);
 		e.run(P,0,50000,100);
+		e.calc_convergence();
 		calc_U(e,P,dx,U[i]);
 		e.clean();
 
