@@ -13,18 +13,6 @@ typedef double prec;
 
 #include "Ensemble_connections.h"
 
-
-int Ensemble_connections::_2dto1d(int a, int b)
-{
-	return a+b*N;
-}
-
-void Ensemble_connections::_1dto2d(int idx,int &a, int &b)
-{
-	a=idx%N;
-	b=idx/N;
-}
-
 int Ensemble_connections::size()
 {
 	return N;
@@ -63,7 +51,6 @@ void Ensemble_connections::generate(std::string s)
 			connect(i,i+1);
 		}
 	}
-	
 }
 
 void Ensemble_connections::connect(int i, int j)
@@ -123,7 +110,6 @@ std::string Ensemble_connections::get_type()
 void Ensemble_connections::print_to_console()
 {
 	std::cout << name <<": N="<< N << " k="<< k << " proba=" << proba << " " << type<<std::endl;
-	
 	for (int i = 0; i < N; ++i)
 	{
 		std::cout << "   ";
@@ -134,4 +120,15 @@ void Ensemble_connections::print_to_console()
 
 		std::cout << std::endl;
 	}
+}
+
+int Ensemble_connections::_2dto1d(int a, int b)
+{
+	return a+b*N;
+}
+
+void Ensemble_connections::_1dto2d(int idx,int &a, int &b)
+{
+	a=idx%N;
+	b=idx/N;
 }

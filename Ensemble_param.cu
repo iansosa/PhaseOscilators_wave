@@ -13,14 +13,14 @@ typedef double prec;
 
 #include "Ensemble_param.h"
 
-void Ensemble_param::equal(std::vector<prec> &x)
-{
-	container=x;
-}
-
 void Ensemble_param::assign(int i, prec value)
 {
 	container[i]=value;
+}
+
+void Ensemble_param::pass_ref(std::vector<prec> &x)
+{
+	container=x;
 }
 
 void Ensemble_param::dist(prec in_mid, prec in_sigma)
@@ -39,6 +39,11 @@ void Ensemble_param::resize(int in_N)
 	N=in_N;
 	container.resize(in_N);
 	generate(false);
+}
+
+prec& Ensemble_param::operator[](int i)
+{
+	return container[i];
 }
 
 void Ensemble_param::generate(bool first)
@@ -129,9 +134,4 @@ void Ensemble_param::print_to_console()
 		std::cout << container[i] << " ";
 	}
 	std::cout << std::endl;
-}
-
-prec& Ensemble_param::operator[](int i)
-{
-	return container[i];
 }

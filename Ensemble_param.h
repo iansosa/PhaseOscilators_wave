@@ -38,28 +38,16 @@ class Ensemble_param
 		}
 
 		void assign(int i, prec value); //assignes value to element i in container
-
-		void equal(std::vector<prec> &x);
-
+		void pass_ref(std::vector<prec> &x); //passes by reference vector x to container
 		void dist(prec in_mid, prec in_sigma=0); //sets medium value and sigma
-
 		int size(); //returns size of container
-
 		void resize(int i); //resizes container
-
 		prec& operator[](int i); //returns element i from container
-
 		void generate(bool first=false); //sets elements in container with a gaussian distribution(mid,sigma). If argument true then first element is also random
-
 		void print(); //prints container in file
-
 		void load(); //loads container from file
-
 		void type_rand(bool=true); //if true set type to gauss, if false type is set to ofirst
-
 		void print_to_console(); //prints container elements in console
-
-
 };
 
 #endif

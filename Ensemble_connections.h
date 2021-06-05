@@ -8,13 +8,13 @@
 
 class Ensemble_connections
 {
-	int N;
-	std::string name;
-	boost::mt19937 &rng;
-	std::vector<prec> container;
-	int k=2;
-	prec proba=1;
-	std::string type="global";
+	int N; //numbrt of connections
+	std::string name; //internal name of variable
+	boost::mt19937 &rng; //random variable generator
+	std::vector<prec> container; //conection container
+	int k=2; //connection grade of ensemble, not used
+	prec proba=1; //probability of activation of conection, not used
+	std::string type="global"; //type of ensemble
 
 	public:
 
@@ -34,25 +34,15 @@ class Ensemble_connections
 		}
 
 		int size(); //returns size of container
-
 		void resize(int i); //resizes container and generates it again
-
 		void generate(std::string s); //sets elements in container following the instructions in string
-
 		void connect(int i, int j); //connects two elements
-
 		void print(); //prints container in file
-
 		void load(); //loads container from file
-
-		std::string get_type();
-
+		std::string get_type(); //returns type
 		void print_to_console(); //prints container elements in console
-
-		int _2dto1d(int a, int b);
-
-		void _1dto2d(int idx,int &a, int &b);
-
+		int _2dto1d(int a, int b); //transform a and b to a 1D coordinate
+		void _1dto2d(int idx,int &a, int &b); //using idx sets a and b to the corresponding 2D coordinates
 };
 
 #endif
