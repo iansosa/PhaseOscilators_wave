@@ -61,20 +61,36 @@ void print_U_stats(std::vector<std::vector<prec>> &U)
 	std::vector<prec> U_sigm(U[0].size(),0);
 	for (int i = 0; i < U[0].size(); ++i) //N
 	{
+		int norma=0;
 		for (int j = 0; j < U.size(); ++j) //promedio
 		{
-			U_med[i]=U_med[i]+U[j][i];
+			if(U[j][i]>0 && U[j][i]<500)
+			{
+				norma++;
+				U_med[i]=U_med[i]+U[j][i];
+			}	
 		}
-		U_med[i]=U_med[i]/U.size();
+		if(norma>0)
+		{
+			U_med[i]=U_med[i]/norma;
+		}
 	}
 
 	for (int i = 0; i < U[0].size(); ++i) //N
 	{
+		int norma=0;
 		for (int j = 0; j < U.size(); ++j) //promedio
 		{
-			U_sigm[i]=pow(U[j][i]-U_med[i],2);
+			if(U[j][i]>0 && U[j][i]<500)
+			{
+				norma++;
+				U_sigm[i]=pow(U[j][i]-U_med[i],2);
+			}	
 		}
-		U_sigm[i]=U_sigm[i]/U.size();
+		if(norma>0)
+		{
+			U_sigm[i]=U_sigm[i]/norma;
+		}
 		U_sigm[i]=sqrt(U_sigm[i]);
 	}
 	std::string name="U_stats";
@@ -90,7 +106,7 @@ void print_U_stats(std::vector<std::vector<prec>> &U)
 	txtOut.close();	
 }
 
-int main()
+void promedio_U()
 {
  	boost::mt19937 rng(static_cast<unsigned int>(std::time(0)));
 
@@ -128,8 +144,29 @@ int main()
 
 		P.generate();
 	}
+	e.print();
 
 	print_U_stats(U);
+}
+
+int main()
+{
+ 	boost::mt19937 rng(static_cast<unsigned int>(std::time(0)));
+
+ 	int N;
+ 	std::cout << "N: ";
+ 	std::cin >> N;
+ 	int chunk_size = N/omp_get_max_threads();
+ 	omp_set_schedule( omp_sched_static , chunk_size );
+
+    prec I=0.1;
+    prec G=0.25;
+    prec K=N;
+	Dinamic P(N ,K ,rng ,I ,I*0 ,1 ,0 ,G ,G*0 ,1 ,0,"chain"); //N, K, rng, I, sigm_I, F, sigm_F, G, sigm_G, W, sigm_W
+	Evolve e(N, rng);
+
+	e.run(P,0,200000,2000);
+	e.print();
 
 	return 0;
 }
