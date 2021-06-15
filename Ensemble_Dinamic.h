@@ -78,6 +78,10 @@ class Dinamic
     	void print_params(); //prints to files all parameters in the evolution
     	void print_params_to_console(); //prints all parameters to console
     	void generate(); //generates a new realization of parameters
+    	void init_I_type_rand(bool c_bool, bool c_f_belong); //initializas I as (true=gauss, false ofirst), (true first belongs to dist, false first equals mid)
+    	void init_F_type_rand(bool c_bool, bool c_f_belong);
+    	void init_G_type_rand(bool c_bool, bool c_f_belong);
+    	void init_W_type_rand(bool c_bool, bool c_f_belong);
     	std::string get_type(); //returns type stored in A
 };
 

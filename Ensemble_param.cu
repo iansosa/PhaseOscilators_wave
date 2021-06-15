@@ -38,7 +38,7 @@ void Ensemble_param::resize(int in_N)
 {
 	N=in_N;
 	container.resize(in_N);
-	generate(false);
+	generate();
 }
 
 prec& Ensemble_param::operator[](int i)
@@ -46,7 +46,7 @@ prec& Ensemble_param::operator[](int i)
 	return container[i];
 }
 
-void Ensemble_param::generate(bool first)
+void Ensemble_param::generate()
 {
 	boost::normal_distribution<> gauss(mid,sigma);
     boost::variate_generator< boost::mt19937&, boost::normal_distribution<> > gen(rng,gauss);
@@ -55,7 +55,7 @@ void Ensemble_param::generate(bool first)
     	container[i]=gen();
     }
 
-    if(first==false)
+    if(f_belong==false)
     {
     	container[0]=mid;
     }
@@ -80,7 +80,9 @@ void Ensemble_param::print()
 	txtOut << N << " ";
 	txtOut << mid << " ";
 	txtOut << sigma << " ";
+	txtOut << f_belong << " ";
 	txtOut << type << " ";
+	
 	for (int i = 0; i < container.size(); ++i)
 	{
 		txtOut << container[i] << " ";
@@ -100,7 +102,9 @@ void Ensemble_param::load()
 	txtIn >> N;
 	txtIn >> mid;
 	txtIn >> sigma;
+	txtIn >> f_belong;
 	txtIn >> type;
+
 	container.resize(N);
 	if(N_check!=N)
 	{
@@ -113,7 +117,7 @@ void Ensemble_param::load()
 	txtIn.close();
 }
 
-void Ensemble_param::type_rand(bool is_rand)
+void Ensemble_param::type_rand(bool is_rand, bool c_f_belong)
 {
 	if(is_rand==true)
 	{
@@ -123,6 +127,7 @@ void Ensemble_param::type_rand(bool is_rand)
 	{
 		type="ofirst";
 	}
+	f_belong=c_f_belong;
 }
 
 void Ensemble_param::print_to_console()

@@ -64,7 +64,7 @@ void print_U_stats(std::vector<std::vector<prec>> &U)
 		int norma=0;
 		for (int j = 0; j < U.size(); ++j) //promedio
 		{
-			if(U[j][i]>0 && U[j][i]<500)
+			if(U[j][i]>-1000 && U[j][i]<500)
 			{
 				norma++;
 				U_med[i]=U_med[i]+U[j][i];
@@ -81,7 +81,7 @@ void print_U_stats(std::vector<std::vector<prec>> &U)
 		int norma=0;
 		for (int j = 0; j < U.size(); ++j) //promedio
 		{
-			if(U[j][i]>0 && U[j][i]<500)
+			if(U[j][i]>-1000 && U[j][i]<500)
 			{
 				norma++;
 				U_sigm[i]=pow(U[j][i]-U_med[i],2);
@@ -131,6 +131,7 @@ void promedio_U()
     prec I=0.1;
     prec G=5;
 	Dinamic P(N ,K ,rng ,I ,I*0.01 ,1 ,0 ,G ,G*0.01 ,1 ,0,"chain"); //N, K, rng, I, sigm_I, F, sigm_F, G, sigm_G, W, sigm_W
+	P.init_I_type_rand(true,false);
 
 	Evolve e(N, rng);
 	for (int i = 0; i < prom; ++i)
@@ -141,6 +142,7 @@ void promedio_U()
 		e.calc_convergence();
 		calc_U(e,P,dx,U[i]);
 		e.clean();
+		P.print_params();
 
 		P.generate();
 	}
@@ -162,11 +164,13 @@ int main()
     prec I=0.1;
     prec G=0.25;
     prec K=N;
-	Dinamic P(N ,K ,rng ,I ,I*0 ,1 ,0 ,G ,G*0 ,1 ,0,"chain"); //N, K, rng, I, sigm_I, F, sigm_F, G, sigm_G, W, sigm_W
+	Dinamic P(N ,K ,rng ,I ,I*0 ,1000 ,0 ,G ,G*0 ,1 ,0,"chain"); //N, K, rng, I, sigm_I, F, sigm_F, G, sigm_G, W, sigm_W
 	Evolve e(N, rng);
 
-	e.run(P,0,200000,2000);
+	e.run(P,0,200000,1000);
 	e.print();
+	e.calc_convergence();
+	printU(e,P,0.01);
 
 	return 0;
 }

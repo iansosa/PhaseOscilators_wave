@@ -142,6 +142,30 @@ void Dinamic::generate()
    	W.generate();
 }
 
+void Dinamic::init_I_type_rand(bool c_bool, bool c_f_belong)
+{
+	I.type_rand(c_bool, c_f_belong);
+	I.generate();
+}
+
+void Dinamic::init_F_type_rand(bool c_bool, bool c_f_belong)
+{
+	F.type_rand(c_bool, c_f_belong);
+	F.generate();
+}
+
+void Dinamic::init_G_type_rand(bool c_bool, bool c_f_belong)
+{
+	G.type_rand(c_bool, c_f_belong);
+	G.generate();
+}
+
+void Dinamic::init_W_type_rand(bool c_bool, bool c_f_belong)
+{
+	W.type_rand(c_bool, c_f_belong);
+	W.generate();
+}
+
 std::string Dinamic::get_type()
 {
 	return A.get_type();
