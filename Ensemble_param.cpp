@@ -9,7 +9,7 @@
 #include <boost/numeric/odeint.hpp>
 #include <boost/random.hpp>
 
-typedef double prec;
+typedef long double prec;
 
 #include "Ensemble_param.h"
 

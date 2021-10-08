@@ -9,9 +9,45 @@
 #include <boost/numeric/odeint.hpp>
 #include <boost/random.hpp>
 
-typedef double prec;
+typedef long double prec;
 
 #include "Ensemble_connections.h"
+
+void Ensemble_connections::set_type_id()
+{
+	if(get_type()=="global")
+	{
+		type_id=0;
+	}
+	if(get_type()=="chain")
+	{
+		type_id=1;
+	}
+	if(get_type()=="custom")
+	{
+		type_id=2;
+	}
+	if(get_type()=="h_chain")
+	{
+		type_id=3;
+	}
+	if(get_type()=="t_chain")
+	{
+		type_id=4;
+	}
+	if(get_type()=="s_chain")
+	{
+		type_id=5;
+	}
+	if(get_type()=="c_a_chain")
+	{
+		type_id=6;
+	}
+	if(get_type()=="solid_chain")
+	{
+		type_id=7;
+	}
+}
 
 int Ensemble_connections::size()
 {
@@ -35,15 +71,7 @@ void Ensemble_connections::generate(std::string s)
 	{
 		std::fill(container.begin(), container.end(), 0);
 	}
-	if(s=="chain")
-	{
-		std::fill(container.begin(), container.end(), 0);
-		for (int i = 0; i < N-1; ++i)
-		{
-			connect(i,i+1);
-		}
-	}
-	if(s=="h_chain")
+	if(TypeIs("chain"))
 	{
 		std::fill(container.begin(), container.end(), 0);
 		for (int i = 0; i < N-1; ++i)
@@ -120,6 +148,15 @@ void Ensemble_connections::print_to_console()
 
 		std::cout << std::endl;
 	}
+}
+
+bool Ensemble_connections::TypeIs(std::string s)
+{
+	if (type.find(s) != std::string::npos) 
+	{
+		return true;
+	}
+	return false; 
 }
 
 int Ensemble_connections::_2dto1d(int a, int b)

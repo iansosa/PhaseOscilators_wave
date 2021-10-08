@@ -39,7 +39,11 @@ class Dinamic
 			prec interaction_sum(int id, const std::vector<prec> &x); //decides what type of interaction sum it is and returns it
 			prec force_sum(prec sum,int id, const std::vector<prec> &x,const prec t); //decides what type of other forces sum it is and returns it
 			prec h_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t); //calcs the sum of other forces (not interactions) in a chain of harmonic oscilators
+			prec t_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t); //calcs the sum of other forces (not interactions) in a chain of harmonic oscilators and triangular force
+			prec s_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t); //calcs the sum of other forces (not interactions) in a chain of harmonic oscilators and serrucho force
+			prec c_a_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t); //calcs the sum of other forces (not interactions) in a chain of harmonic oscilators and custom anarmoic force
 			prec p_force_sum(prec sum,int id, const std::vector<prec> &x,const prec t); //calcs the sum of other forces (not interactions) in a chain of phase oscilators
+			prec solid_force_sum(int i,const std::vector<prec> &x,const prec t); //calcs the force sum between the external force and a fixed point
 			prec interaction_sum_all(int id, const std::vector<prec> &x); //calcs the sum of interactions in a globaly coupled ensemble of phase oscilators
 
 			void operator() (const std::vector<prec> &x ,std::vector<prec> &dxdt ,const prec t)
@@ -51,7 +55,6 @@ class Dinamic
 			    	sum=interaction_sum(i,x);
 					dxdt[2*i]=x[2*i+1];
 					dxdt[2*i+1]=force_sum(sum,i,x,t);
-					//dxdt[2*i+1]=sum/I_t_odeint[i]+F_t_odeint[i]*sin(W_t_odeint[i]*t-x[2*i])/I_t_odeint[i]-(G_t_odeint[i]/I_t_odeint[i])*x[2*i+1];
 				}
 			}
 	};
@@ -66,7 +69,7 @@ class Dinamic
 			txtIn_check.close();
     	}
 
-    	Dinamic(int in_N , prec in_K, boost::mt19937 &in_rng, prec mid_I, prec sigma_I, prec mid_F, prec sigma_F, prec mid_G, prec sigma_G, prec mid_W, prec sigma_W,std::string A_type="global") : N(in_N), K(in_K), rng(in_rng), A(in_N,"A",rng,A_type), I(in_N,"I",mid_I,sigma_I,in_rng), F(in_N,"F",mid_F,sigma_F,in_rng,false), G(in_N,"G",mid_G,sigma_G,in_rng), W(in_N,"W",mid_W,sigma_W,in_rng,false)
+    	Dinamic(int in_N , prec in_K, boost::mt19937 &in_rng, prec mid_I, prec sigma_I, prec mid_F, prec sigma_F, prec mid_G, prec sigma_G, prec mid_W, prec sigma_W,std::string A_type="global") : N(in_N), K(in_K), rng(in_rng), A(in_N,"A",rng,A_type), I(in_N,"I",mid_I,sigma_I,in_rng), F(in_N,"F",mid_F,sigma_F,in_rng,false), G(in_N,"G",mid_G,sigma_G,in_rng), W(in_N,"W",mid_W,sigma_W,in_rng)
     	{ }
 
     	to_odeint operator() () //returns light function used in odeint
@@ -82,6 +85,7 @@ class Dinamic
     	void init_F_type_rand(bool c_bool, bool c_f_belong);
     	void init_G_type_rand(bool c_bool, bool c_f_belong);
     	void init_W_type_rand(bool c_bool, bool c_f_belong);
+    	void new_va_F(int id,prec val); //sets new value for the force at 0
     	std::string get_type(); //returns type stored in A
 };
 
