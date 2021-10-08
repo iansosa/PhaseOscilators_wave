@@ -442,7 +442,7 @@ int main()
 
  	//measure_chaos(N,F_start,F_end,G,K);
  	//param_iter(N,500,0.1,5);
- 	measure_lyapunov(N,F_start,F_end,G,K,201.06,500);
+ 	measure_lyapunov(N,F_start,F_end,G,K,251.32,500);
 
 	return 0;
 }
